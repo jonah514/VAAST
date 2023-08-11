@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VAAST</title>
+  <link rel="icon" type="image/x-icon" href="/static/vaasticon.png">
+
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" /> 
+
+ 
+ <div class="action-bar">
+    <ul>
+      
+      <div id="login">
+        <div>
+      <li><a href="login.html">Login</a></li>
+        </div>
+      </div>
+
+      <div id="contact">
+        <div>
+      <li><a href="contact.html">Contact</a></li>
+        </div>
+      </div>
+      
+      <div id="services">
+      <div>
+        <li><a href="/static/Services.html">Services</a></li>
+          </div>
+        </div>
+      
+       
+
+      <li class="dropdown">
+        <div id="about">
+          <div>
+        <a href="javascript:void(0)">About</a>
+        <div class="dropdown-content">
+          <a href="static/Why-Choose-USF.html"><i class="fas fa-info-circle"></i>About Us</a>
+          <a href="/static/Our-TeamF.html"><i class="fas fa-users"></i> Our Team</a>
+          <a href="/static/Mission-visionF.html"><i class="fas fa-eye"></i> Mission & Vision</a>
+          <a href="/static/faq.html"><i class="fas fa-question-circle"></i> FAQs</a>
+        </div>
+      </div>
+    </div>
+      </li>
+    
+    <li><a href="/static/Geoexp.html">Geofencing Instructions</a></li>
+
+      <div id="home">
+        <div>
+      <li><a href="http://127.0.0.1:5000/">Home</a></li>
+        </div>
+      </div>
+      
+      <div id="logo">
+        <div>
+          <li class="right-image"><img src="/static/vaast1.png" alt="Image" style="width: 100px;"></li> <!-- Add this line -->
+          <a style ="color: white; font-size: 20px">Vessel & Aircraft Anomaly<br> System Tracker</a>
+        </div>
+      </div>
+     
+    </ul>
+    
+    <!-- Move the search bar here -->
+    
+
+
+    <div class="login-form">
+      <h3>Login</h3>
+      
+      <form action="process-login" method="POST">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button type="submit">Login</button>
+      </form>
+      <p>Don't have an account? <a href="register.html">Create an account</a></p>
+    </div>
+
+  </div>
+
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+
+    <!-- Include Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+     <!-- plugin for rotating markers -->
+    <script src="/static/leaflet.rotatedMarker.js"></script>
+    <!-- plugin for ant path-->
+    <script src="/static/leaflet-ant-path.js"></script>
+    <!-- plugin for geofencing-->
+    <script src="https://unpkg.com/leaflet-lasso@2.2.12/dist/leaflet-lasso.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" integrity="sha512-gc3xjCmIy673V6MyOAZhIW93xhM9ei1I+gLbmFjUHIjocENRsLX/QUE1htk5q1XV2D/iie/VQ8DXI6Vu8bexvQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Include the jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include the turf library for polygon calculations -->
+    <script src='https://unpkg.com/@turf/turf@6/turf.min.js'></script>
+    <!-- Import fullscreen -->
+    <link rel="stylesheet" type="text/css" href="/static/fullscreen/Control.FullScreen.css" />
+    <script src="/static/fullscreen/Control.FullScreen.js"></script>
+    <!-- Import radar and heatmap -->
+    <link rel="stylesheet" href="/static/radar/leaflet-radar.css"></script>
+    <script src="/static/radar/leaflet-radar.js"></script>
+    <script src="/static/leaflet-heat.js"></script>
+    <script src="/static/leaflet.ajax.js"></script>
+    
+    <style>
+        #map {
+            position:absolute;
+            height:99%;
+            width: 68%;
+            float: left;
+            top: 75px;
+            margin-left: 2%;
+            z-index:-200
+        }
+        ::placeholder{
+        color:white;
+      }
+        #sidebar {
+           position:absolute;
+           width:30%;
+           height:70%;
+           right:5px;
+           bottom:5px;
+        }
+        #filter{
+          position:absolute;
+          width:28%;
+          height:50%;
+          top:75px;
+          right:5px;
+        }
+        #logo{
+          position:absolute;
+          float:left;
+          float:top
+        }
+       /* #contact{
+          position:absolute;
+          right:10%
+        }
+        #login{
+          position:absolute;
+          right:1%
+        }
+        #home{
+          position:absolute;
+          right:40%
+        }
+        #about{
+          position:absolute;
+          right:30%
+        }
+        #services{
+          position:absolute;
+          right:20%
+        }*/
+        .selected {
+            filter: hue-rotate(135deg);
+        }
+    </style>
+</head>
+<body>  
+
+  <div class="container">
+    <div id="map"></div>
+    <div id="filter">
+      <div>
+    <div class="leaflet-control-layers leaflet-control-layers-expanded">
+      <!-- <form action = "http://127.0.0.1:5000/filter" method="POST"> -->
+        <div class="leaflet-filter-list">
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="ships" id="ship-button" checked>
+            <i class="fas fa-anchor"></i> Show Ships
+          </label>
+          
+          <label><b>_____________________________________</b></label><br>
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="planes" id="plane-button" checked>
+            <i class="fas fa-plane"></i> Show Planes(Plane Filters Below)
+          </label>
+          <label style="font-size: 14px;"><br>Must pick at least one to show planes:</label>
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="com" id="comm-button" checked>
+            <i class="fas fa-regular fa-money-bill"></i> Show Commerical
+          </label>
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="mil" id="mil-button" checked>
+            <i class="fas fa-flag-usa"></i> Show Military
+          </label>
+          <label style="font-size: 14px;"><br>Must pick at least one to show planes:</label>
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="int" id="int-button" checked>
+            <i class="fas fa-globe"></i> Show International
+          </label>
+  
+          <label style="font-size: 14px;">
+            <input type="checkbox" name="dom" id="dom-button" checked>
+            <i class="fas fa-dolly"></i> Show Domestic
+          </label>
+          <br>
+          <label style="font-size: 14px;">
+            <input type="range" name = "altmin" value="0" min="0" max="100000" id="altMin" oninput="this.nextElementSibling.value = this.value">
+            <output>0</output>
+            </i>Feet: Plane Filter by Altitude (Minimum)
+          </label>
+          <label style="font-size: 14px;">
+            <input type="range" name = "altmax" value="100000" min="0" max="100000" id="altMax" oninput="this.nextElementSibling.value = this.value">
+            <output>100000</output>
+            </i>Feet: Plane Filter by Altitude (Maximum)
+          </label>
+          <label style="font-size: 14px;">
+            <input type="range" name = "speedmin" value="0" min="0" max="2000" id="speedMin" oninput="this.nextElementSibling.value = this.value">
+            <output>0</output>
+            </i>Knots: Plane Filter by Speed (Minimum)
+          </label>
+          <label style="font-size: 14px;">
+            <input type="range" name = "speedmax" value="2000" min="0" max="2000" id="speedMax" oninput="this.nextElementSibling.value = this.value">
+            <output>2000</output>
+            </i>Knots: Plane Filter by Speed (Maximum)
+          </label>
+          <br>
+          <input type = "Button" onclick = "applyDemoFilters()" value = "Apply Filters">
+          <label>_____________________________________</label><br>
+        </div>
+      <!-- </form> -->
+      Anomalies:<br>
+      <input type = "Button" onclick = "disappearingsignalfunc()" value = "Disappearing Signal Analysis"/>
+      <br>
+      <br>
+      <input type = "Button" onclick = "patrollingbehaviorfunc()" value = "Patrolling Behavior Analysis"/>
+      <br>
+      <label>_____________________________________</label><br>
+      <!-- Search bars -->
+    Search Timestamps:
+    <form action = "http://127.0.0.1:5000/newtimestamp" method="POST">
+      <input type="datetime-local" name="textInput" step="1">
+      <input type="submit">
+    </form>
+
+    Search Flight/Ship ID:<br>
+      <input type="text" name="IDsearch" id="IDsearch"/>
+      <input type="button" onclick="zoomTo()" value="Find"/>
+  </div>
+</div>
+    </div>
+    </div>
+    
+
+
+  <script>
+
+  // Updating checkboxes to refect most recent filter application
+    fetch('http://127.0.0.1:5000/filterstatus')
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        document.getElementById("ship-button").checked = data[0];
+        document.getElementById("plane-button").checked = data[1];
+        document.getElementById("comm-button").checked = data[2];
+        document.getElementById("mil-button").checked = data[3];
+        document.getElementById("int-button").checked = data[4];
+        document.getElementById("dom-button").checked = data[5];
+        document.getElementById("altMin").value = data[6][0];
+        document.getElementById("altMax").value = data[6][1];
+        document.getElementById("speedMin").value = data[7][0];
+        document.getElementById("speedMax").value = data[7][1];
+    })
+
+
+    //map bounds
+    var southwest = L.latLng(-180,-220),
+        northeast = L.latLng(180,220),
+        bounds = L.latLngBounds(southwest,northeast);
+
+    // initiating map
+    var map = L.map('map',{minZoom:1, 
+      maxZoom:15, 
+      zoomControl: true, 
+      fullscreenControl: true,
+      fullscreenControlOptions: {
+          position: 'topright'
+      }, 
+      maxBounds:bounds,
+      maxBoundsViscosity:1}).setView([0, 0], 2);
+
+    //setting standard base layer
+    var streetMapLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+    maxZoom: 18,
+    }).addTo(map);
+
+    //api key for weather API
+    const API_KEY = 'p3WgZI6xG3RmgOAqFGnXhgihoj6R4KDo';
+    const DATA_FIELD = 'precipitationIntensity';
+    const TIMESTAMP = (new Date()).toISOString();
+    var weatherLayer = L.tileLayer(`https://api.tomorrow.io/v4/map/tile/{z}/{x}/{y}/${DATA_FIELD}/${TIMESTAMP}.png?apikey=${API_KEY}`, {
+      attribution: '&copy; <a href="https://www.tomorrow.io/weather-api">Powered by Tomorrow.io</a>',
+    });
+    
+    var gradient = {
+      0.0: 'green',   // Low congestion
+      0.5: 'yellow',  // Moderate congestion
+      1.0: 'red'      // High congestion
+    };
+    var heatMapData = [];
+    var heatMapLayer = L.heatLayer(heatMapData, {
+      radius: 25, // Adjust the radius of the heatmap points
+      minOpacity: 0.2, // Adjust the minimum opacity of the heatmap points
+      maxZoom: 15, // Adjust the maximum zoom level at which the heatmap is displayed
+      gradient: gradient // Set the custom gradient
+    });
+    
+    //initializing geojsonLayer with group of banned countries
+    var geojsonLayer = new L.GeoJSON.AJAX("/static/banned_countries.geo.json",{color: '#ffb300', fillColor: '#fccb56'});
+
+    var baseLayers = {
+    };
+
+    //Adding menu to toggle layers
+    var overlayLayers = {
+      // "Geofence": geofenceLayer,
+      "Congestion Analysis": heatMapLayer,
+      "Weather": weatherLayer,
+      "Banned Airspace":geojsonLayer,
+    };
+    L.control.layers(baseLayers, overlayLayers).addTo(map);
+
+    //Creating LayerGroups to hold all plane and boat markers
+    var planemarkers = new L.LayerGroup().addTo(map);
+    var boatmarkers = new L.LayerGroup().addTo(map);
+
+    //Function to zoom to requested flight/ship
+    function zoomTo() {
+      var ID = document.getElementById("IDsearch").value;
+      console.log(ID);
+      
+      var zoomlatlng;
+
+      planemarkers.eachLayer(function (marker){
+        if (marker.options.title == ID) {
+          zoomlatlng = marker.getLatLng();
+        }
+      })
+
+      boatmarkers.eachLayer(function (marker){
+        if (marker.options.title == ID) {
+          zoomlatlng = marker.getLatLng();
+        }
+      })
+      console.log(zoomlatlng);
+      map.flyTo(zoomlatlng, 10);
+    }
+
+    function applyDemoFilters() {
+      $.post( "http://127.0.0.1:5000/filter", {
+          planes: document.getElementById("plane-button").checked,
+          ships: document.getElementById("ship-button").checked,
+          com: document.getElementById("comm-button").checked,
+          mil: document.getElementById("mil-button").checked,
+          int: document.getElementById("int-button").checked,
+          dom: document.getElementById("dom-button").checked,
+          altmin: document.getElementById("altMin").value,
+          altmax: document.getElementById("altMax").value,
+          speedmin: document.getElementById("speedMin").value,
+          speedmax: document.getElementById("speedMax").value,
+      },
+      function(data,status){
+        boatmarkers.clearLayers();
+        boatmarkers = new L.LayerGroup().addTo(map);
+        fetch('http://127.0.0.1:5000/shipdata')
+              .then(response => response.json())
+              .then(data => {
+                  const array = JSON.parse(data)
+                  console.log(array)
+                  const columns = array.map(item => { //parsing data as array
+                      return {
+                          latitude: item.Latitude,  //format: (local variable name): (item."dynamo db column name")
+                          longitude: item.Longitude,
+                          heading: item.Heading,
+                          speed: item.Speed,
+                          nav_stat: item.Nav_Status,
+                          id: item.Time_ID
+                      };
+                    });
+                  for (i = 0; i < columns.length; i++) {
+                  var latlng = L.latLng(columns[i]['latitude'], columns[i]['longitude']);
+                  heatMapData.push(latlng);
+                  var marker = L.marker(latlng, 
+                  {icon: shipIcon, rotationAngle: columns[i]['heading'] - 90, rotationOrigin: 'center',
+                  title: columns[i]['id'].substring(9),}).addTo(planemarkers);
+
+                  marker.options.coordinates = [columns[i]['latitude'], columns[i]['longitude']];
+                  marker.options.origin = columns[i]['origin'];
+                  marker.options.destination = columns[i]['destination'];
+
+                  geojsonLayer.eachLayer(function(layer) {
+                      if (layer.contains(latlng)) {
+                        marker.setIcon(redBoatIcon);
+                      }
+                  });
+
+                  drawnItems.eachLayer(function(layer) {
+                      if (layer.contains(latlng)) {
+                        marker.setIcon(redBoatIcon);
+                      }
+                  });
+
+                  var div = document.createElement("div");
+                  div.innerHTML = "Timestamp: " + columns[i]['id'].substring(0,8) + '</br>'
+                  + "MMSI: " + columns[i]['id'].substring(9) +'</br>' + "Speed: " + columns[i]['speed'] + " Knots" + '</br>' +
+                  + "Nav Stat: " + columns[i]['nav_stat'] + "</br>"
+                  var button = document.createElement("button");
+                  button.innerHTML = "Predict Path";
+
+
+                  marker.on('mouseover', function(ev) {
+                      handleMouseover(ev.target);
+                  });
+                  marker.on('mouseout', function(ev) {
+                      handleMouseout(ev.target);
+                  });
+                  //click behavior -> sending query request
+                  marker.on('click', function(ev) {
+                      antpath.remove()
+                      var ID = ev.target.options.title;
+                      console.log(ID);
+
+                      $.post( "/getshippath", {
+                          javascript_data: ID
+                      }, 
+                      function(data, status){
+                        const parsed = JSON.parse(data);
+                        var array = parsed[0]['path_data'];
+                        const columnsToSelect = [1, 2]; // Selecting columns 0 and 2
+                        path_array = array.map(row => columnsToSelect.map(col => row[col]));
+
+                        console.log(path_array);
+                      }); 
+          
+                      antpath = antPath(path_array, {
+                        "delay": 400,
+                        "dashArray": [
+                          10,
+                          20
+                        ],
+                        "weight": 5,
+                        "color": "#0000FF",
+                        "pulseColor": "#FFFFFF",
+                        "paused": false,
+                        "reverse": false,
+                        "hardwareAccelerated": true
+                      });
+                      antpath.addTo(map);
+                      }); 
+              }
+          });
+
+        //draw plane markers
+        planemarkers.clearLayers();
+        planemarkers = new L.LayerGroup().addTo(map);
+        renderFlights();
+      })
+    }
+
+    function disappearingsignalfunc() {
+      $.post( "http://127.0.0.1:5000/analysis", {
+          type: "disappearing"
+      },
+      function(data,status){
+          console.log(data)
+          const array = JSON.parse(data)
+                console.log(array)
+                const columns = array.map(item => { //parsing data as array
+                    return {
+                        latitude: item.Latitude,  //format: (local variable name): (item."dynamo db column name")
+                        longitude: item.Longitude,
+                        heading: item.Heading,
+                        speed: item.Speed,
+                        altitude: item.Altitude,
+                        equipment: item.Equipment,
+                        id: item.Time_ID,
+                        origin: item.Going_To,
+                        destination: item.Leaving_From //Columns in database mistakenly switched so just hardcoded change here
+                    };
+                });
+            // console.log(columns);
+
+            //draws markers
+            for (i = 0; i < columns.length; i++) {
+                var latlng = L.latLng(columns[i]['latitude'], columns[i]['longitude']);
+                heatMapData.push(latlng);
+                var marker = L.marker(latlng, 
+                {icon: bluePlaneIcon, rotationAngle: columns[i]['heading'] - 90, rotationOrigin: 'center',
+                title: columns[i]['id'].substring(9),}).addTo(planemarkers);
+
+                marker.options.coordinates = [columns[i]['latitude'], columns[i]['longitude']];
+                marker.options.origin = columns[i]['origin'];
+                marker.options.destination = columns[i]['destination'];
+
+                // if (endpoint == 'analysis') {
+                //     marker.setIcon(bluePlaneIcon);
+                // }
+
+                geojsonLayer.eachLayer(function(layer) {
+                    if (layer.contains(latlng)) {
+                      marker.setIcon(redPlaneIcon);
+                    }
+                });
+
+                var div = document.createElement("div");
+                div.innerHTML = "Timestamp: " + columns[i]['id'].substring(0,8) + '</br>'
+                 + "Flight ID: " + columns[i]['id'].substring(9) +'</br>' + "Speed: " + columns[i]['speed'] + "Knots" + '</br>' + "Altitude: " 
+                 + columns[i]['altitude'] + "Feet" + '</br>' + "Equipment: " + columns[i]['equipment'] + '</br>' + 
+                 "Origin: " + columns[i]['origin'] + '</br>' + "Destination: " + columns[i]['destination'] + "</br>"
+                var button = document.createElement("button");
+                button.innerHTML = "Predict Path";
+
+                button.onclick = function() {
+                  console.log(coords, desti);
+                    $.post( "http://127.0.0.1:5000/prediction", {
+                       cur_coordinates: JSON.stringify(coords), 
+                       origin_airport: origin_airport,
+                       dest_airport: desti 
+                    },
+                    function(data, status){
+                      // const parsed = JSON.parse(data);
+                      console.log(data);
+                      predictedantpath.remove()
+                      predictedantpath = antPath(data, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#09A600",
+                      "pulseColor": "#3CFF31",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+                    predictedantpath.addTo(map); 
+                    });
+                }
+                div.appendChild(button);
+                marker.bindPopup(div);
+
+
+                marker.on('mouseover', function(ev) {
+                    handleMouseover(ev.target);
+                });
+                marker.on('mouseout', function(ev) {
+                    handleMouseout(ev.target);
+                });
+                //click behavior -> sending query request
+                marker.on('click', function(ev) {
+                    antpath.remove()
+                    var ID = ev.target.options.title;
+                    console.log(ID);
+
+                    $.post( "/getplanepath", {
+                        javascript_data: ID
+                    }, 
+                    function(data, status){
+                      const parsed = JSON.parse(data);
+                      var array = parsed[0]['path_data'];
+                      const columnsToSelect = [1, 2]; // Selecting columns 0 and 2
+                      path_array = array.map(row => columnsToSelect.map(col => row[col]));
+
+                      console.log(path_array);
+                    }); 
+        
+                    antpath = antPath(path_array, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#0000FF",
+                      "pulseColor": "#FFFFFF",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+                    antpath.addTo(map);
+                    }); 
+            }
+      }
+      )
+    }
+    function patrollingbehaviorfunc() {
+      $.post( "http://127.0.0.1:5000/analysis", {
+          type: "patrolling"
+      },
+      function(data,status){
+          console.log(data);
+          const array = JSON.parse(data)
+                console.log(array)
+                const columns = array.map(item => { //parsing data as array
+                    return {
+                        latitude: item.Latitude,  //format: (local variable name): (item."dynamo db column name")
+                        longitude: item.Longitude,
+                        heading: item.Heading,
+                        speed: item.Speed,
+                        altitude: item.Altitude,
+                        equipment: item.Equipment,
+                        id: item.Time_ID,
+                        origin: item.Going_To,
+                        destination: item.Leaving_From //Columns in database mistakenly switched so just hardcoded change here
+                    };
+                });
+            // console.log(columns);
+
+            for (i = 0; i < columns.length; i++) {
+                var latlng = L.latLng(columns[i]['latitude'], columns[i]['longitude']);
+                heatMapData.push(latlng);
+                var marker = L.marker(latlng, 
+                {icon: bluePlaneIcon, rotationAngle: columns[i]['heading'] - 90, rotationOrigin: 'center',
+                title: columns[i]['id'].substring(9),}).addTo(planemarkers);
+
+                marker.options.coordinates = [columns[i]['latitude'], columns[i]['longitude']];
+                marker.options.origin = columns[i]['origin'];
+                marker.options.destination = columns[i]['destination'];
+
+                geojsonLayer.eachLayer(function(layer) {
+                    if (layer.contains(latlng)) {
+                      marker.setIcon(redPlaneIcon);
+                    }
+                });
+
+                var div = document.createElement("div");
+                div.innerHTML = "Timestamp: " + columns[i]['id'].substring(0,8) + '</br>'
+                 + "Flight ID: " + columns[i]['id'].substring(9) +'</br>' + "Speed: " + columns[i]['speed'] + "Knots" + '</br>' + "Altitude: " 
+                 + columns[i]['altitude'] + "Feet" + '</br>' + "Equipment: " + columns[i]['equipment'] + '</br>' + 
+                 "Origin: " + columns[i]['origin'] + '</br>' + "Destination: " + columns[i]['destination'] + "</br>"
+                var button = document.createElement("button");
+                button.innerHTML = "Predict Path";
+
+                button.onclick = function() {
+                  console.log(coords, desti);
+                    $.post( "http://127.0.0.1:5000/prediction", {
+                       cur_coordinates: JSON.stringify(coords), 
+                       origin_airport: origin_airport,
+                       dest_airport: desti 
+                    },
+                    function(data, status){
+                      // const parsed = JSON.parse(data);
+                      console.log(data);
+                      predictedantpath.remove()
+                      predictedantpath = antPath(data, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#09A600",
+                      "pulseColor": "#3CFF31",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+                    predictedantpath.addTo(map); 
+                    });
+                }
+                div.appendChild(button);
+                marker.bindPopup(div);
+
+
+                marker.on('mouseover', function(ev) {
+                    handleMouseover(ev.target);
+                });
+                marker.on('mouseout', function(ev) {
+                    handleMouseout(ev.target);
+                });
+                //click behavior -> sending query request
+                marker.on('click', function(ev) {
+                    antpath.remove()
+                    var ID = ev.target.options.title;
+                    console.log(ID);
+
+                    $.post( "/getplanepath", {
+                        javascript_data: ID
+                    }, 
+                    function(data, status){
+                      const parsed = JSON.parse(data);
+                      var array = parsed[0]['path_data'];
+                      const columnsToSelect = [1, 2]; // Selecting columns 0 and 2
+                      path_array = array.map(row => columnsToSelect.map(col => row[col]));
+
+                      console.log(path_array);
+                    }); 
+        
+                    antpath = antPath(path_array, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#0000FF",
+                      "pulseColor": "#FFFFFF",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+                    antpath.addTo(map);
+                    }); 
+            }   
+      }
+      )
+    }
+
+    var drawnItems = L.featureGroup().addTo(map);
+    //Configurations for drawing control options
+    map.addControl(new L.Control.Draw({
+          edit: {
+              featureGroup: drawnItems,
+              poly: {
+                  allowIntersection: false
+              }
+          },
+          draw: {
+            polyline: false,
+            marker: false,
+            circlemarker: false,
+            circle: {
+              showRadius: true,
+           
+            },
+            polygon: {
+                allowIntersection: false,  
+                showArea: true,
+                drawError: {
+                  color: '#e1e100', // Color the shape will turn when intersects
+                  message: '<strong>Polygon draw does not allow intersections!<strong> (allowIntersection: false)' // Message that will show when intersect
+                },
+                shapeOptions: {
+                  color: '#0000FF'
+                }
+              }
+          }
+      }));
+
+    //Adding custom "contains" fuctions for different shapes
+    L.Polygon.include({
+    contains: function (latLng) {
+        return turf.inside(new L.Marker(latLng).toGeoJSON(), this.toGeoJSON());
+    } 
+    });
+
+    L.Rectangle.include({
+        contains: function (latLng) {
+            return this.getBounds().contains(latLng);
+        }
+    });
+
+    L.Circle.include({
+    contains: function (latLng) {
+        return this.getLatLng().distanceTo(latLng) < this.getRadius();
+    }
+    });
+
+    //When drawing is created, make plane/ships red
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var shape = event.layerType;
+        var layer = event.layer;
+        var latlng;
+        drawnItems.addLayer(layer);
+
+        planemarkers.eachLayer(function (marker) {
+          if (event.layer.contains(marker.getLatLng())) {
+            marker.setIcon(redPlaneIcon);
+          }
+        })
+
+        boatmarkers.eachLayer(function (marker) {
+          if (event.layer.contains(marker.getLatLng())) {
+            marker.setIcon(redShipIcon);
+          }
+        })
+        
+    });
+
+    //When drawing deleted, revert plane/ships back to black
+    map.on(L.Draw.Event.DELETED, function (event) {
+        event.layers.eachLayer(layer => {
+          var index;
+          planemarkers.eachLayer(function (marker) {
+          if (layer.contains(marker.getLatLng())) {
+            marker.setIcon(planeIcon);
+          }});
+
+          boatmarkers.eachLayer(function (marker) {
+          if (layer.contains(marker.getLatLng())) {
+            marker.setIcon(shipIcon);
+          }});
+
+        })
+    });
+
+
+    //Make new selection of plane/ships red and revert old ones to black
+    map.on('draw:edited', function(event) {
+      drawnItems.eachLayer(function(layer) {
+        console.log(layer);
+        planemarkers.eachLayer(function (marker) {
+          if (layer.contains(marker.getLatLng())) {
+            marker.setIcon(redPlaneIcon);
+          } else {
+            marker.setIcon(planeIcon);
+          }
+        })
+
+        boatmarkers.eachLayer(function (marker) {
+          if (layer.contains(marker.getLatLng())) {
+            marker.setIcon(redShipIcon);
+          } else {
+            marker.setIcon(shipIcon);
+          }
+        })
+    })
+  });
+
+    
+
+    // Function to handle dropdown menu item clicks
+    function handleDropdownItemClick(event) {
+      var target = event.target;
+      if (target.tagName.toLowerCase() === 'a') {
+        var href = target.getAttribute('href');
+        if (href) {
+          window.location.href = href;
+        }
+      }
+    }
+
+    // Add click event listeners to dropdown menu items
+    var dropdownItems = document.querySelectorAll('.dropdown-content a');
+    for (var i = 0; i < dropdownItems.length; i++) {
+      dropdownItems[i].addEventListener('click', handleDropdownItemClick);
+    }
+    //setting up icon images and sizes
+    const planeIcon = L.icon({
+            iconUrl: '/static/plane-solid.svg',
+            iconSize: [16,16],
+        });
+
+    const redPlaneIcon = L.icon({
+            iconUrl: '/static/plane-red.png',
+            iconSize: [16,16],
+        });
+
+    const bluePlaneIcon = L.icon({
+            iconUrl: '/static/plane-blue.png',
+            iconSize: [16,16],
+        });
+
+    const shipIcon = L.icon({
+            iconUrl: '/static/simpleboaticon1.png',
+            iconSize: [16,16],
+        });
+
+    const redShipIcon = L.icon({
+            iconUrl: '/static/simpleboaticon-red.png',
+            iconSize: [16,16],
+        });
+
+    const blueShipIcon = L.icon({
+            iconUrl: '/static/simpleboaticon-blue.png',
+            iconSize: [16,16],
+        });
+
+    //initialize antpath here so a new one isn't created for each marker
+    var antPath = L.polyline.antPath;
+    var path_array = [[0,0]];
+
+    var antpath = antPath(path_array, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#0000FF",
+                      "pulseColor": "#FFFFFF",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+    antpath.addTo(map);
+
+    //Same thing for predicted antpath
+    var predictedantpath = antPath(path_array, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#3CFF33",
+                      "pulseColor": "#CAFFC7",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+    predictedantpath.addTo(map);
+
+    var hoverTimeout;
+    var coords;
+    var origin_airport;
+    var desti;
+
+    function handleMouseover(marker) {
+      clearTimeout(hoverTimeout);
+      hoverTimeout = setTimeout(function() {
+        coords = marker.options.coordinates;
+        origin_airport = marker.options.origin;
+        desti = marker.options.destination;
+        marker.openPopup();
+    }, 1000);
+    }
+
+    // Function to handle the mouseout event
+    function handleMouseout(marker) {
+      // Clear the timeout when the mouse leaves
+      clearTimeout(hoverTimeout);
+    }
+    renderFlights();
+    function renderFlights() {
+      fetch('http://127.0.0.1:5000/flightdata')
+              .then(response => response.json())
+              .then(data => {
+              
+                  const array = JSON.parse(data)
+                  console.log(array)
+                  const columns = array.map(item => { //parsing data as array
+                      return {
+                          latitude: item.Latitude,  //format: (local variable name): (item."dynamo db column name")
+                          longitude: item.Longitude,
+                          heading: item.Heading,
+                          speed: item.Speed,
+                          altitude: item.Altitude,
+                          equipment: item.Equipment,
+                          id: item.Time_ID,
+                          origin: item.Going_To,
+                          destination: item.Leaving_From //Columns in database mistakenly switched so just hardcoded change here
+                      };
+                  });
+              // console.log(columns);
+
+              for (i = 0; i < columns.length; i++) {
+                  var latlng = L.latLng(columns[i]['latitude'], columns[i]['longitude']);
+                  heatMapData.push(latlng);
+                  var marker = L.marker(latlng, 
+                  {icon: planeIcon, rotationAngle: columns[i]['heading'] - 90, rotationOrigin: 'center',
+                  title: columns[i]['id'].substring(9),}).addTo(planemarkers);
+
+                  marker.options.coordinates = [columns[i]['latitude'], columns[i]['longitude']];
+                  marker.options.origin = columns[i]['origin'];
+                  marker.options.destination = columns[i]['destination'];
+
+                  geojsonLayer.eachLayer(function(layer) {
+                      if (layer.contains(latlng)) {
+                        marker.setIcon(redPlaneIcon);
+                      }
+                  });
+
+                  drawnItems.eachLayer(function(layer) {
+                      if (layer.contains(latlng)) {
+                        marker.setIcon(redPlaneIcon);
+                      }
+                  });
+
+                  var div = document.createElement("div");
+                  div.innerHTML = "Timestamp: " + columns[i]['id'].substring(0,8) + '</br>'
+                  + "Flight ID: " + columns[i]['id'].substring(9) +'</br>' + "Speed: " + columns[i]['speed'] + "Knots" + '</br>' + "Altitude: " 
+                  + columns[i]['altitude'] + "Feet" + '</br>' + "Equipment: " + columns[i]['equipment'] + '</br>' + 
+                  "Origin: " + columns[i]['origin'] + '</br>' + "Destination: " + columns[i]['destination'] + "</br>"
+                  var button = document.createElement("button");
+                  button.innerHTML = "Predict Path";
+
+                  button.onclick = function() {
+                    console.log(coords, desti);
+                      $.post( "http://127.0.0.1:5000/prediction", {
+                        cur_coordinates: JSON.stringify(coords), 
+                        origin_airport: origin_airport,
+                        dest_airport: desti 
+                      },
+                      function(data, status){
+                        // const parsed = JSON.parse(data);
+                        console.log(data);
+                        predictedantpath.remove()
+                        predictedantpath = antPath(data, {
+                        "delay": 400,
+                        "dashArray": [
+                          10,
+                          20
+                        ],
+                        "weight": 5,
+                        "color": "#09A600",
+                        "pulseColor": "#3CFF31",
+                        "paused": false,
+                        "reverse": false,
+                        "hardwareAccelerated": true
+                      });
+                      predictedantpath.addTo(map); 
+                      });
+                  }
+                  div.appendChild(button);
+                  marker.bindPopup(div);
+
+
+                  marker.on('mouseover', function(ev) {
+                      handleMouseover(ev.target);
+                  });
+                  marker.on('mouseout', function(ev) {
+                      handleMouseout(ev.target);
+                  });
+                  //click behavior -> sending query request
+                  marker.on('click', function(ev) {
+                      antpath.remove()
+                      var ID = ev.target.options.title;
+                      console.log(ID);
+
+                      $.post( "/getplanepath", {
+                          javascript_data: ID
+                      }, 
+                      function(data, status){
+                        const parsed = JSON.parse(data);
+                        var array = parsed[0]['path_data'];
+                        const columnsToSelect = [1, 2]; // Selecting columns 0 and 2
+                        path_array = array.map(row => columnsToSelect.map(col => row[col]));
+
+                        console.log(path_array);
+                      }); 
+          
+                      antpath = antPath(path_array, {
+                        "delay": 400,
+                        "dashArray": [
+                          10,
+                          20
+                        ],
+                        "weight": 5,
+                        "color": "#0000FF",
+                        "pulseColor": "#FFFFFF",
+                        "paused": false,
+                        "reverse": false,
+                        "hardwareAccelerated": true
+                      });
+                      antpath.addTo(map);
+                      }); 
+              }
+          });
+        }
+
+        // Fetch and plot ships
+        fetch('http://127.0.0.1:5000/shipdata')
+            .then(response => response.json())
+            .then(data => {
+
+                const array = JSON.parse(data)
+                console.log(array)
+                const columns = array.map(item => {
+                    return {
+                        latitude: item.Latitude,
+                        longitude: item.Longitude,
+                        heading: item.Heading,
+                        speed: item.Speed,
+                        id: item.Time_ID
+                    };
+                });
+            // console.log(columns);
+
+            for (i = 0; i < columns.length; i++) {
+                var latlng = L.latLng(columns[i]['latitude'], columns[i]['longitude']);
+                heatMapData.push(latlng);  
+                var marker = L.marker(latlng, 
+                {icon: shipIcon, rotationAngle: columns[i]['heading'] - 90, rotationOrigin: 'center',
+                title: columns[i]['id'].substring(9)})
+                .addTo(boatmarkers)
+                .bindPopup("Timestamp: " + columns[i]['id'].substring(0,8) + '</br>' + "MMSI: " + columns[i]['id'].substring(9) + '</br>'
+                + "Speed: " + columns[i]['speed']);
+                //allmarkers.addLayer(marker);
+                //hover behavior
+                geojsonLayer.eachLayer(function(layer) {
+                    if (layer.contains(latlng)) {
+                      marker.setIcon(redShipIcon);
+                    }
+                });
+
+                marker.on('mouseover', function(ev) {
+                    handleMouseover(ev.target);
+                });
+                marker.on('mouseout', function(ev) {
+                    handleMouseout(ev.target);
+                });
+                //click behavior -> sending query request
+                marker.on('click', function(ev) {
+                    antpath.remove()
+                    var ID = ev.target.options.title;
+                    console.log(ID);
+
+                    $.post( "/getshippath", {
+                        javascript_data: ID
+                    }, 
+                    function(data, status){
+                      const parsed = JSON.parse(data);
+                      var array = parsed[0]['path_data'];
+                      const columnsToSelect = [1, 2]; // Selecting columns 0 and 2
+                      path_array = array.map(row => columnsToSelect.map(col => row[col]));
+
+                      console.log(path_array);
+                    }); 
+        
+                    antpath = antPath(path_array, {
+                      "delay": 400,
+                      "dashArray": [
+                        10,
+                        20
+                      ],
+                      "weight": 5,
+                      "color": "#0000FF",
+                      "pulseColor": "#FFFFFF",
+                      "paused": false,
+                      "reverse": false,
+                      "hardwareAccelerated": true
+                    });
+                    antpath.addTo(map);
+                    }); 
+            }
+        });
+        planemarkers.eachLayer(function (marker){
+          if (geojsonLayer.contains(marker.getLatLng())) {
+            marker.setIcon(redPlaneIcon);
+          }
+        })
+
+        boatmarkers.eachLayer(function (marker){
+          if (geojsonLayer.contains(marker.getLatLng())) {
+            marker.setIcon(redBoatIcon);
+          }
+      } )
+  </script>
+</body>
+</html>
